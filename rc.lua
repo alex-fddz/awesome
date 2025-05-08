@@ -370,7 +370,15 @@ clientkeys = gears.table.join(
         {description = "toggle fullscreen", group = "client"}),
     awful.key({ modkey,           }, "q",      function (c) c:kill()                         end,
               {description = "close", group = "client"}),
-    awful.key({ modkey,           }, "g",  awful.client.floating.toggle                         ,
+    awful.key({ modkey,           }, "g", -- awful.client.floating.toggle
+              function (c)
+                  local c = client.focus
+                  c.floating = not c.floating
+                  if c.floating then
+                      c:raise()
+                      awful.placement.centered(c, {honor_workarea = true, honor_padding = true})
+                  end
+              end,
               {description = "toggle floating", group = "client"}),
     awful.key({ modkey,           }, "Return", function (c) c:swap(awful.client.getmaster()) end,
               {description = "move to master", group = "client"}),
