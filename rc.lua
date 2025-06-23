@@ -67,6 +67,7 @@ editor_cmd = terminal .. " -e " .. editor
 -- I suggest you to remap Mod4 to another key using xmodmap or other tools.
 -- However, you can use another modifier like Mod1, but it may interact with others.
 modkey = "Mod4"
+altkey = "Mod1"
 
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
@@ -261,6 +262,21 @@ globalkeys = gears.table.join(
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore,
               {description = "go back", group = "tag"}),
 
+    -- Focus by Index
+    awful.key({ modkey,           }, "Tab",
+        function ()
+            awful.client.focus.byidx( 1)
+        end,
+        {description = "focus by index", group = "client"}
+    ),
+    awful.key({ modkey, "Shift"   }, "Tab",
+        function ()
+            awful.client.focus.byidx(-1)
+        end,
+        {description = "focus by index", group = "client"}
+    ),
+
+    -- Focus by Direction
     awful.key({ modkey,           }, "h",
         function ()
             awful.client.focus.bydirection("left")
@@ -304,7 +320,7 @@ globalkeys = gears.table.join(
               {description = "focus the previous screen (<)", group = "screen"}),
     awful.key({ modkey,           }, "u", awful.client.urgent.jumpto,
               {description = "jump to urgent client", group = "client"}),
-    awful.key({ modkey,           }, "Tab",
+    awful.key({ altkey,           }, "Tab",
         function ()
             awful.client.focus.history.previous()
             if client.focus then
