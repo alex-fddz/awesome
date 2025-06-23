@@ -262,6 +262,39 @@ globalkeys = gears.table.join(
     awful.key({ modkey,           }, "Escape", awful.tag.history.restore,
               {description = "go back", group = "tag"}),
 
+    awful.key({ modkey, "Shift"   }, "Left",
+              function ()
+                  if client.focus then
+                      -- local tag = client.focus.screen.tags[0]
+                      local c = client.focus
+                      local tag = c.screen.selected_tag
+                      local tags = c.screen.tags
+                      if tag then
+                          local idx = tag.index - 1
+                          if idx < 1 then idx = #tags end
+                          c:move_to_tag(tags[idx])
+                          tags[idx]:view_only()
+                      end
+                 end
+              end,
+              {description = "move client to previous", group = "tag"}),
+    awful.key({ modkey, "Shift"   }, "Right",
+              function ()
+                  if client.focus then
+                      -- local tag = client.focus.screen.tags[0]
+                      local c = client.focus
+                      local tag = c.screen.selected_tag
+                      local tags = c.screen.tags
+                      if tag then
+                          local idx = tag.index + 1
+                          if idx > #tags then idx = 1 end
+                          c:move_to_tag(tags[idx])
+                          tags[idx]:view_only()
+                      end
+                 end
+              end,
+              {description = "move client to next", group = "tag"}),
+
     -- Focus by Index
     awful.key({ modkey,           }, "Tab",
         function ()
