@@ -312,6 +312,18 @@ globalkeys = gears.table.join(
             end
         end,
         {description = "go back", group = "client"}),
+    
+    awful.key({ modkey, "Shift" }, "Page_Down",
+        function ()
+            local c = awful.client.restore()
+            -- Focus restored client
+            if c then
+              c:emit_signal(
+                  "request::activate", "key.unminimize", {raise = true}
+              )
+            end
+        end,
+        {description = "restore minimized", group = "client"}),
 
     -- Standard program
     awful.key({ modkey,           }, "t", function () awful.spawn(terminal) end,
@@ -425,17 +437,6 @@ clientkeys = gears.table.join(
             c.minimized = true
         end ,
         {description = "minimize", group = "client"}),
-    awful.key({ modkey, "Control" }, "Page_Down",
-        function ()
-            local c = awful.client.restore()
-            -- Focus restored client
-            if c then
-              c:emit_signal(
-                  "request::activate", "key.unminimize", {raise = true}
-              )
-            end
-        end,
-        {description = "restore minimized", group = "client"}),
     awful.key({ modkey,           }, "Page_Up",
         function (c)
             c.maximized = not c.maximized
