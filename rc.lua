@@ -69,6 +69,8 @@ editor_cmd = terminal .. " -e " .. editor
 modkey = "Mod4"
 altkey = "Mod1"
 
+local previous_layout = {}
+
 -- Table of layouts to cover with awful.layout.inc, order matters.
 awful.layout.layouts = {
     awful.layout.suit.tile,
@@ -77,15 +79,15 @@ awful.layout.layouts = {
     -- awful.layout.suit.tile.top,
     -- awful.layout.suit.fair,
     -- awful.layout.suit.fair.horizontal,
-    awful.layout.suit.max,
-    -- awful.layout.suit.magnifier,
+    awful.layout.suit.magnifier,
     -- awful.layout.suit.max.fullscreen,
-    awful.layout.suit.spiral,
-    awful.layout.suit.spiral.dwindle,
-    -- awful.layout.suit.corner.nw,
+    -- awful.layout.suit.spiral,
+    -- awful.layout.suit.spiral.dwindle,
+    awful.layout.suit.corner.nw,
     -- awful.layout.suit.corner.ne,
     -- awful.layout.suit.corner.sw,
     -- awful.layout.suit.corner.se,
+    awful.layout.suit.max,
     awful.layout.suit.floating,
 }
 -- }}}
@@ -244,7 +246,7 @@ awful.screen.connect_for_each_screen(function(s)
     }
 
     -- Create the wibox
-    s.mywibox = awful.wibar({ position = "top", screen = s, height = 24 })
+    s.mywibox = awful.wibar({ position = "top", screen = s, height = 22 })
 
     -- Add widgets to the wibox
     s.mywibox:setup {
@@ -278,12 +280,16 @@ root.buttons(gears.table.join(
 
 -- {{{ Key bindings
 globalkeys = gears.table.join(
-    awful.key({ modkey,           }, "s",      hotkeys_popup.show_help,
+    awful.key({ modkey,           }, "F1",      hotkeys_popup.show_help,
               {description="show help", group="awesome"}),
     awful.key({ modkey,           }, "Left",   awful.tag.viewprev,
               {description = "view previous", group = "tag"}),
     awful.key({ modkey,           }, "Right",  awful.tag.viewnext,
               {description = "view next", group = "tag"}),
+--    awful.key({ modkey,           }, "a",   awful.tag.viewprev,
+--              {description = "view previous", group = "tag"}),
+--    awful.key({ modkey,           }, "s",  awful.tag.viewnext,
+--              {description = "view next", group = "tag"}),
     -- awful.key({ modkey,           }, "Escape", awful.tag.history.restore,
     --           {description = "go back", group = "tag"}),
 
@@ -329,9 +335,9 @@ globalkeys = gears.table.join(
     ),
     awful.key({ modkey, "Shift"   }, "Tab",
         function ()
-            awful.client.focus.byidx(-1)
+            awful.client.swap.byidx(1)
         end,
-        {description = "focus by index", group = "client"}
+        {description = "swap by index", group = "client"}
     ),
 
     -- Focus by Direction
@@ -363,6 +369,45 @@ globalkeys = gears.table.join(
               {description = "show main menu", group = "awesome"}),
 
     -- Layout manipulation
+    awful.key({ modkey,           }, "m",
+        function ()
+            local t = awful.screen.focused().selected_tag
+            if not t then return end
+            -- Save current layout (except floating) and set 'max'
+            if awful.layout.get(t.screen) ~= awful.layout.suit.max then
+                if awful.layout.get(t.screen) ~= awful.layout.suit.floating then
+                    previous_layout[t] = awful.layout.get(t.screen)
+                end
+                awful.layout.set(awful.layout.suit.max)
+                if client.focus then
+                    client.focus:raise()
+                end
+            else
+              -- Restore previous layout (or tile) & remove from layouts 
+              awful.layout.set(previous_layout[t] or awful.layout.suit.tile)
+            end
+        end,
+              {description = "toggle max layout", group = "layout"}),
+    awful.key({ modkey,           }, "y",
+        function ()
+            local t = awful.screen.focused().selected_tag
+            if not t then return end
+            -- Save current layout (except max) and set 'floating'
+            if awful.layout.get(t.screen) ~= awful.layout.suit.floating then
+                if awful.layout.get(t.screen) ~= awful.layout.suit.max then
+                    previous_layout[t] = awful.layout.get(t.screen)
+                end
+                awful.layout.set(awful.layout.suit.floating)
+                if client.focus then
+                    client.focus:raise()
+                end
+            else
+              -- Restore previous layout (or tile) & remove from layouts 
+              awful.layout.set(previous_layout[t] or awful.layout.suit.tile)
+            end
+        end,
+              {description = "toggle floating layout", group = "layout"}),
+
     awful.key({ modkey, "Shift"   }, "h", function () awful.client.swap.bydirection("left")  end,
               {description = "swap by direction", group = "client"}),
     awful.key({ modkey, "Shift"   }, "j", function () awful.client.swap.bydirection("down")  end,
