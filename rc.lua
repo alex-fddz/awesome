@@ -53,6 +53,14 @@ beautiful.init(gears.filesystem.get_themes_dir() .. "default/theme.lua")
 beautiful.border_width = 2
 beautiful.useless_gap = 2
 beautiful.wallpaper = "/home/alex/Pictures/Wallpapers/od_waves.jpg"
+beautiful.systray_icon_spacing = 2
+beautiful.tasklist_fg_normal = "#AAA"
+beautiful.tasklist_fg_focus = beautiful.wibar_fg
+beautiful.tasklist_font_focus = beautiful.font
+beautiful.bg_minimize = beautiful.wibar_bg
+beautiful.fg_minimize = "#AAA"
+-- beautiful.tasklist_shape_minimized = beautiful.rounded_rect_shape -- ?
+-- beautiful.tasklist_shape_border_color_minimized = beautiful.wibar_bg
 
 -- This is used later as the default terminal and editor to run.
 terminal = "x-terminal-emulator"
@@ -263,7 +271,7 @@ awful.screen.connect_for_each_screen(function(s)
         { -- Right widgets
             layout = wibox.layout.fixed.horizontal,
             mykeyboardlayout,
-            wibox.widget.systray(),
+            wibox.container.margin(wibox.widget.systray(), 4, 4, 0, 0),
             s.mylayoutbox,
         },
     }
